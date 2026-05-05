@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-80px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            background: #f1f1f1;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .new-task {
+            animation: slideRight 0.4s ease;
+        }
+
+        @keyframes slideRight {
+            from {
+                transform: translateX(80px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .done {
+            text-decoration: line-through;
+        }
+
+        .completed {
+            background: #28a745 !important;
+            color: white;
+        }
+
+        .btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tick {
+            background: green;
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* ⭐ MODERN CARD POPUP */
+        .popup {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            font-weight: bold;
+            opacity: 0;
+            transition: 0.3s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .popup.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Types */
+        .error {
+            border-left: 6px solid #ff4d4d;
+        }
+
+        .success {
+            border-left: 6px solid #28a745;
+        }
+
+        .warning {
+            border-left: 6px solid #ffb400;
+        }
+    </style>
+    <div class="container">
+        <h1>📝 Todo App</h1>
+
+        <div class="input-box">
+            <input type="text" id="taskInput" placeholder="Enter task...">
+            <button onclick="addTask()">Add</button>
+        </div>
+
+        <ul id="taskList"></ul>
+    </div>
+    <div id="popup" class="popup">⚠️ Please enter a task!</div>
+    <script>
+        let input = document.getElementById("taskInput");
+
+        input.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") addTask();
+        });
+
+        function showPopup(message, type = "error") {
+            let popup = document.getElementById("popup");
+
+            popup.innerText = message;
+            popup.className = "popup show " + type;
+
+            setTimeout(() => {
+                popup.classList.remove("show");
+            }, 2000);
+        }
+
+        function addTask() {
+            let task = input.value.trim();
+
+            if (task === "") {
+                showPopup("⚠️ Please enter a task!", "error");
+                return;
+            }
+
+            let li = document.createElement("li");
+            li.classList.add("new-task");
+
+            li.innerHTML = `
+      <span>${task}</span>
+      <div class="btns">
+        <button class="tick" onclick="toggleTask(this)">✔</button>
+        <button class="delete" onclick="deleteTask(this)">❌</button>
+      </div>
+    `;
+
+            document.getElementById("taskList").appendChild(li);
+
+            input.value = "";
+
+            showPopup("✅ Task added successfully!", "success");
+        }
+
+        function toggleTask(btn) {
+            let li = btn.parentElement.parentElement;
+            li.classList.toggle("done");
+            li.classList.toggle("completed");
+        }
+
+        function deleteTask(btn) {
+            let li = btn.parentElement.parentElement;
+
+            li.style.transform = "scale(0)";
+            li.style.opacity = "0";
+
+            setTimeout(() => {
+                li.remove();
+            }, 300);
+
+            showPopup("🗑️ Task deleted!", "warning");
+        }
+    </script>
+
+
+</body>
+
+</html>
